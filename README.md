@@ -1,6 +1,6 @@
 # 🛡️ AWS Architecture Sentinel: Auditoria STRIDE com IA
 
-Este projeto foi desenvolvido para o **Hackathon FIAP - Fase 5 **, com o objetivo de automatizar a análise de segurança de arquiteturas AWS. Utilizando a multimodalidade do **Google Gemini 2.5 Flash**, transformamos um diagrama de arquitetura (JPG) em um dataset de componentes e, sequencialmente, em um relatório detalhado de vulnerabilidades baseado no modelo **STRIDE**.
+Este projeto foi desenvolvido para o **Hackathon FIAP - Fase 5**, com o objetivo de automatizar a análise de segurança de arquiteturas AWS. Utilizando a multimodalidade do **Google Gemini 2.5 Flash**, transformamos um diagrama de arquitetura (JPG) em um dataset de componentes e, sequencialmente, em um relatório detalhado de vulnerabilidades baseado no modelo **STRIDE**.
 
 
 
