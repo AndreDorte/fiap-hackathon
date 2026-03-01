@@ -6,3 +6,7 @@ __pycache__/
 *.pdf
 *.csv
 cache_gemini.json
+# Ignorar tudo na pasta de outputs
+output/*
+# MAS não ignore o arquivo .gitkeep
+!output/.gitkeep
