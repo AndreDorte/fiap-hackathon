@@ -194,8 +194,14 @@ model = genai.GenerativeModel(
     system_instruction="Você é um auditor de segurança brasileiro. Todos os seus relatórios e análises devem ser escritos exclusivamente em português do Brasil, de forma técnica e objetiva."
 )
 
+# Analisa a imagem jpg com a arquitetura da AWS via LLM. 
+# Gera um dataset com o nome de cada componente na pasta output. 
 analisar_arquitetura()
 
+# Informa a pasta e o nome do relatório de vulnerabilidade que será gerado.
 caminho_relatorio_pdf = f"output//Relatorio_Seguranca_AWS.pdf"
 
+# Analisa o dataset gerado no passo anterior via LLM, criando um relatório 
+# no modelo STRIDE, sinalizando as vulnerabilidades identificadas e as 
+# sugestões para mitigição das mesmas
 analisar_dataset(caminho_relatorio_pdf)
