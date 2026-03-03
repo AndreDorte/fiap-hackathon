@@ -194,15 +194,8 @@ model = genai.GenerativeModel(
     system_instruction="Você é um auditor de segurança brasileiro. Todos os seus relatórios e análises devem ser escritos exclusivamente em português do Brasil, de forma técnica e objetiva."
 )
 
-# analisar_arquitetura()
+analisar_arquitetura()
 
 caminho_relatorio_pdf = f"output//Relatorio_Seguranca_AWS.pdf"
 
 analisar_dataset(caminho_relatorio_pdf)
-
-# TESTE TEMPORARIO
-# with open('output/cache_gemini.json', 'r', encoding='utf-8') as f:
-#     cache = json.load(f)
-# gerar_pdf(cache,caminho_relatorio_pdf)
-
-# enviar_email_com_anexo("adorte29@gmail.com", caminho_relatorio_pdf)

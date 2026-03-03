@@ -35,52 +35,73 @@ Este projeto foi desenvolvido para o **Hackathon FIAP - Fase 5**, com o objetivo
 
 ## 💻 Como Executar
 
-Siga os passos abaixo para configurar o ambiente e rodar a análise em sua máquina.
+Siga os passos abaixo para configurar o ambiente e rodar a análise em sua máquina. Em nosso roteiro via Windows, executamos todos os comandos via **Windows PowerShell**, com a versão do Python **3.11**.
 
-### 1. Clonar o Repositório
+### 1. Preparar o Diretório de Trabalho
+
+Escolha ou crie uma pasta de sua preferência para organizar o projeto:
+
+```
+# Criar uma pasta para seus projetos (exemplo)
+mkdir MeusProjetos
+
+cd MeusProjetos
+```
+
+### 2. Clonar o Repositório
+
+
 ```bash
 git clone [https://github.com/AndreDorte/fiap-hackathon.git](https://github.com/AndreDorte/fiap-hackathon.git)
+
 cd fiap-hackathon
 ``` 
-### 2. Configurar o Ambiente Virtual (venv)
+### 3. Configurar o Ambiente Virtual (venv)
 No Windows (PowerShell):
 
 ```PowerShell
-python -m venv venv
-.\venv\Scripts\activate
+py -m venv .venv
+
+.\.venv\Scripts\Activate.ps1 # outra alternativa seria .\venv\Scripts\Activate.bat
 ``` 
 No Linux ou macOS:
 
 ```Bash
-python3 -m venv venv
+python3 -m venv .venv
+
 source venv/bin/activate
 ``` 
 
-### 3. Instalar as Dependências
+### 4. Instalar as Dependências
 Com o ambiente virtual ativo, execute:
 
 ```Bash
 pip install -r requirements.txt
 ```
 
-### 4. Configurar a API Key
+### 5. Criar seu arquivo de variáveis de ambiente
 
-1. Obtenha sua chave gratuita no [Google AI Studio](https://aistudio.google.com/api-keys).
-2. Obtenha sua chave gratuita no [Resend](https://resend.com/api-keys)
-3. Na raiz do projeto, crie um arquivo chamado .env.
-4. Adicione suas chaves no arquivo seguindo exatamente este formato:
+1. Na raiz do projeto, crie um arquivo chamado .env.
+2. Adicione suas chaves no arquivo seguindo exatamente este formato:
 
 ```Plaintext
 GEMINI_API_KEY=sua_chave_aqui
 RESEND_API_KEY=sua_chave_aqui
 ```
 
-### 5. Executar a Análise
+### 6. Configurar a API Key
+
+1. Obtenha sua chave gratuita no [Google AI Studio](https://aistudio.google.com/api-keys).
+2. Atualiza a chave GEMINI_API_KEY no arquivo *.env* com o valor obtido
+3. Obtenha sua chave gratuita no [Resend](https://resend.com/api-keys)
+4. Atualiza a chave RESEND_API_KEY no arquivo *.env* com o valor obtido
+
+### 7. Executar a Análise
 
 Certifique-se de que sua imagem de arquitetura está na pasta **arquivos** raiz com o nome **arquitetura_aws_01.jpg**. Em seguida, rode:
 
 ```Bash
-python main.py
+python .\src\hackathon.py
 ```
 ### 📂 Estrutura de Arquivos
 
