@@ -1,18 +1,20 @@
-import google.generativeai as genai
 import csv
+import google.generativeai as genai
 import json
-import time
 import os
 import PIL.Image
 import resend
+import time
+from datetime import datetime
 from dotenv import load_dotenv
 from fpdf import FPDF
+from pathlib import Path
 
 
 class PDFRelatorio(FPDF):
     def header(self):
         self.set_font('Arial', 'B', 15)
-        self.cell(0, 10, 'Relatório de Segurança AWS - Modelo STRIDE', 0, 1, 'C')
+        self.cell(0, 10, 'Relatório de Segurança - Modelo STRIDE', 0, 1, 'C')
         self.ln(5)
 
     def footer(self):
@@ -69,29 +71,28 @@ def gerar_pdf(dados_analise,caminho_relatorio_pdf):
     pdf.output(caminho_relatorio_pdf)
 
 
-def analisar_arquitetura():
-    # 3. Carregar a imagem da arquitetura AWS
-    img = PIL.Image.open('arquivos/arquitetura_aws_01.jpg')
+def analisar_arquitetura(nome_arquivo,caminho_arquitetura_analise):
+    img = PIL.Image.open(caminho_arquitetura_analise)
 
-    # 4. Criar o prompt específico para extração de componentes
     prompt = """
-    Analise esta imagem de arquitetura AWS e identifique todos os componentes e serviços presentes.
-    Gere uma lista estruturada contendo apenas o nome do componente/serviço.
-    Retorne o resultado estritamente no formato CSV, com o cabeçalho 'componente'.
+    Analise esta imagem de arquitetura de nuvem. 
+    1. Identifique o provedor de nuvem (ex: AWS, Azure, Google Cloud).
+    2. Liste todos os componentes e serviços presentes.
+    3. Retorne o resultado estritamente no formato CSV com o cabeçalho chamado 'componente' em português.
+    Não inclua introduções ou formatação markdown, apenas os dados CSV.
     """
 
-    # 5. Gerar a resposta enviando a imagem e o texto
     response = model.generate_content([prompt, img])
 
-    # 6. Exibir o resultado no console e salvar em um arquivo .csv
+    # Exibir o resultado no console e salvar em um arquivo .csv
     print("Componentes identificados:")
     print(response.text)
 
-    # Salvando em um arquivo dataset.csv
-    with open('output/aws_components_dataset.csv', 'w', encoding='utf-8') as f:
+    # Salvando em um arquivo dataset_xxx.csv
+    with open(f'output//{nome_arquivo}', 'w', encoding='utf-8') as f:
         f.write(response.text.replace("```csv","").replace("```",""))
 
-    print("\nDataset exportado com sucesso para 'aws_components_dataset.csv'")
+    print(f"\nDataset exportado com sucesso para {nome_arquivo}'.csv'")
 
 
 def analisar_stride(componente):
@@ -118,30 +119,35 @@ def analisar_stride(componente):
         return f"Erro ao analisar {componente}: {str(e)}"
     
 
-def analisar_dataset(caminho_relatorio_pdf):
-    resultados = []
+def analisar_dataset(dataset,caminho_relatorio_pdf,nome_arquivo_cache):
+    lista_para_analise = []
 
-    with open('output/aws_components_dataset.csv', mode='r', encoding='utf-8') as csvfile:
+    with open(f'output//{dataset}', mode='r', encoding='utf-8') as csvfile:
         reader = csv.DictReader(csvfile)
+
         for row in reader:
             componente = row['componente']
-            print(f"Analisando {componente}...")
-            
-            response = analisar_stride(componente)
+            if componente:
+                lista_para_analise.append(componente)
 
-            resultados.append({'nome': componente, 'analise': response})
-            time.sleep(2) # Evitar Rate Limit
+        if not lista_para_analise:
+            print("Nenhum componente encontrado no dataset.")
+            return
+        
+    print(f"Enviando {len(lista_para_analise)} componentes para análise STRIDE...")
+    resultado_texto = analisar_todos_componentes(lista_para_analise)
+    
+    processar_lote_para_pdf(resultado_texto,caminho_relatorio_pdf)
 
-    with open('output/cache_gemini.json', 'w', encoding='utf-8') as f:
-        json.dump(resultados, f, ensure_ascii=False, indent=4)
+    # Gerando um arquivo de cache para facilitar a reanalise, evitando uma nova chamada 
+    # a API gratuita do Gemini que tem limite de consumo.
+    with open(f'output//{nome_arquivo_cache}.json', 'w', encoding='utf-8') as f:
+        json.dump(resultado_texto, f, ensure_ascii=False, indent=4)
 
-    # Gerar o arquivo final
-    gerar_pdf(resultados,caminho_relatorio_pdf)
-    print("\nPDF gerado com sucesso: Relatorio_Seguranca_AWS.pdf")
+    print(f"\nPDF gerado com sucesso: {caminho_relatorio_pdf}.pdf")
     
 
 def enviar_email_com_anexo(destinatario, caminho_arquivo):
-    # Verificando se o arquivo existe localmente
     if not os.path.exists(caminho_arquivo):
         print(f"Erro: O arquivo {caminho_arquivo} não foi encontrado.")
         return
@@ -151,11 +157,10 @@ def enviar_email_com_anexo(destinatario, caminho_arquivo):
         # O Resend espera o conteúdo como uma lista de inteiros (bytes)
         attachment_content = list(pdf_data)
 
-    # Configurando os parâmetros do e-mail
     params = {
         "from": "onboarding@resend.dev", # Remetente padrão do plano gratuito
         "to": destinatario,
-        "subject": "Relatório de Arquitetura AWS - Extração IA",
+        "subject": "Relatório de Arquitetura - Extração IA",
         "html": """
             <h1>Relatório Gerado com Sucesso</h1>
             <p>Olá! O script de análise de imagem identificou os componentes da sua arquitetura.</p>
@@ -170,11 +175,66 @@ def enviar_email_com_anexo(destinatario, caminho_arquivo):
     }
 
     try:
-        # Realizando o envio
         email = resend.Emails.send(params)
         print(f"E-mail enviado com sucesso! ID da transação: {email['id']}")
     except Exception as e:
         print(f"Falha ao enviar e-mail: {str(e)}")
+
+
+def analisar_todos_componentes(lista_componentes):
+    """
+    Envia todos os componentes de uma vez para economizar cota de API.
+    """
+    # Transforma a lista em uma string formatada
+    componentes_str = "\n- ".join(lista_componentes)
+    
+    prompt = f"""
+    Atue como um Especialista em Segurança Cloud.
+    Abaixo está uma lista de serviços identificados nesta arquitetura:
+    {componentes_str}
+
+    Para CADA item, gere uma análise técnica STRIDE seguindo EXATAMENTE este modelo:
+    
+    Componente: [Nome do Serviço]
+    S: Ameaça: ... | Mitigação: ...
+    T: Ameaça: ... | Mitigação: ...
+    R: Ameaça: ... | Mitigação: ...
+    I: Ameaça: ... | Mitigação: ...
+    D: Ameaça: ... | Mitigação: ...
+    E: Ameaça: ... | Mitigação: ...
+    ---
+    
+    REGRAS:
+    1. Responda em Português (Brasil).
+    2. Use o delimitador '---' entre cada componente.
+    3. Não inclua introduções ou conclusões.
+    """
+    
+    print(f"Enviando lote de {len(lista_componentes)} componentes para o Gemini...")
+    response = model.generate_content(prompt)
+    return response.text
+
+
+def processar_lote_para_pdf(texto_api, nome_arquivo_original):
+    # Separa o texto pelo delimitador que pedimos no prompt
+    blocos_componentes = texto_api.split('---')
+    
+    dados_para_pdf = []
+    for bloco in blocos_componentes:
+        bloco = bloco.strip()
+        if not bloco: continue
+        
+        # Tenta extrair o nome do componente da primeira linha
+        linhas = bloco.split('\n')
+        nome_comp = linhas[0].replace("Componente:", "").strip()
+        corpo_analise = "\n".join(linhas[1:])
+        
+        dados_para_pdf.append({
+            'nome': nome_comp,
+            'analise': corpo_analise
+        })
+    
+    gerar_pdf(dados_para_pdf, nome_arquivo_original)
 
 
 # Carrega as variáveis do arquivo .env
@@ -194,14 +254,35 @@ model = genai.GenerativeModel(
     system_instruction="Você é um auditor de segurança brasileiro. Todos os seus relatórios e análises devem ser escritos exclusivamente em português do Brasil, de forma técnica e objetiva."
 )
 
-# Analisa a imagem jpg com a arquitetura da AWS via LLM. 
-# Gera um dataset com o nome de cada componente na pasta output. 
-analisar_arquitetura()
+# Caminho da pasta de entrada, que contem os jpgs das arquiteturas a serem analisadas
+pasta_entrada = "arquivos"
 
-# Informa a pasta e o nome do relatório de vulnerabilidade que será gerado.
-caminho_relatorio_pdf = f"output//Relatorio_Seguranca_AWS.pdf"
+# Garante que a pasta existe
+if not os.path.exists(pasta_entrada):
+    os.makedirs(pasta_entrada)
 
-# Analisa o dataset gerado no passo anterior via LLM, criando um relatório 
-# no modelo STRIDE, sinalizando as vulnerabilidades identificadas e as 
-# sugestões para mitigição das mesmas
-analisar_dataset(caminho_relatorio_pdf)
+print(f"Iniciando análise dos arquivos na pasta '{pasta_entrada}'...")
+
+for arquivo in os.listdir(pasta_entrada):
+    if arquivo.lower().endswith((".jpg", ".jpeg")):
+        nome_base_arquivo = Path(arquivo).stem
+        caminho_completo_arquivo = os.path.join(pasta_entrada, arquivo)
+        print(f"Analisando: {arquivo}...")
+
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        nome_dataset = f"dataset_{nome_base_arquivo}_{timestamp}.csv"
+        nome_arquivo_cache = f"cache_{nome_base_arquivo}_{timestamp}"
+        
+        # Analisa a arquitetura do arquivo via LLM. 
+        # Gera um dataset com o nome de cada componente na pasta output.         
+        analisar_arquitetura(nome_dataset, caminho_completo_arquivo)
+
+        time.sleep(30) # Evitar Rate Limit, atraso de 48 segundos segundo retorno da API
+
+        # Informa a pasta e o nome do relatório de vulnerabilidade que será gerado.
+        caminho_relatorio_pdf = f"output//Relatorio_STRIDE_{nome_base_arquivo}_{timestamp}.pdf"
+
+        # Analisa o dataset gerado no passo anterior via LLM, criando um relatório 
+        # no modelo STRIDE, sinalizando as vulnerabilidades identificadas e as 
+        # sugestões para mitigição das mesmas
+        analisar_dataset(nome_dataset,caminho_relatorio_pdf,nome_arquivo_cache)

@@ -1,19 +1,19 @@
-# 🛡️ AWS Architecture Sentinel: Auditoria STRIDE com IA
+# 🛡️ Auditoria STRIDE com IA
 
-Este projeto foi desenvolvido para o **Hackathon FIAP - Fase 5**, com o objetivo de automatizar a análise de segurança de arquiteturas AWS. Utilizando a multimodalidade do **Google Gemini 2.5 Flash**, transformamos um diagrama de arquitetura (JPG) em um dataset de componentes e, sequencialmente, em um relatório detalhado de vulnerabilidades baseado no modelo **STRIDE**.
+Este projeto foi desenvolvido para o **Hackathon FIAP - Fase 5**, com o objetivo de automatizar a análise de segurança de arquiteturas cloud. Utilizando a multimodalidade do **Google Gemini 2.5 Flash**, transformamos um diagrama de arquitetura (JPG) em um dataset de componentes e, sequencialmente, em um relatório detalhado de vulnerabilidades baseado no modelo **STRIDE**.
 
 
 
 ## 🚀 Fluxo de Funcionamento
 
-1.  **Visão Computacional**: O Gemini analisa o diagrama `.jpg` da AWS.
+1.  **Visão Computacional**: O Gemini analisa o diagrama `.jpg`.
 2.  **Extração de Dados**: Identificação automática de cada serviço (S3, EC2, etc).
-3.  **Análise de Segurança**: Processamento individual de cada componente usando o framework **STRIDE** (Spoofing, Tampering, Repudiation, Information Disclosure, Denial of Service, Elevation of Privilege).
+3.  **Análise de Segurança**: Processamento de cada componente usando o framework **STRIDE** (Spoofing, Tampering, Repudiation, Information Disclosure, Denial of Service, Elevation of Privilege).
 4.  **Relatório Profissional**: Exportação automática para um PDF formatado e objetivo, com notificação via e-mail.
 
 ## 🛠️ Tecnologias Utilizadas
 
-* **Linguagem:** Python 3.10+
+* **Linguagem:** Python 3.11+
 * **IA:** Google Gemini 2.5 Flash (API `google-generativeai`)
 * **Processamento de Imagem:** Pillow (PIL)
 * **Geração de PDF:** FPDF2
@@ -62,7 +62,7 @@ No Windows (PowerShell):
 ```PowerShell
 py -m venv .venv
 
-.\.venv\Scripts\Activate.ps1 # outra alternativa seria .\venv\Scripts\Activate.bat
+.\.venv\Scripts\Activate.ps1 # outra alternativa seria .\.venv\Scripts\Activate.bat
 ``` 
 No Linux ou macOS:
 
@@ -98,7 +98,7 @@ RESEND_API_KEY=sua_chave_aqui
 
 ### 7. Executar a Análise
 
-Certifique-se de que sua imagem de arquitetura está na pasta **arquivos** raiz com o nome **arquitetura_aws_01.jpg**. Em seguida, rode:
+Certifique-se de que sua imagem de arquitetura está na pasta **arquivos** raiz com extensão `jpg`. Em seguida, rode:
 
 ```Bash
 python .\src\hackathon.py
@@ -107,7 +107,7 @@ python .\src\hackathon.py
 
 ```
 ├── arquivos/                    # Pasta com o jpg da arquitetura analisada
-│   ├── arquitetura_aws_01.jpg     
+│   ├── arquivo.jpg     
 ├── output/                      # Pasta onde os PDFs finais e arquivos auxiliares são gerados
 ├── src/
 │   ├── hackathon.py             # Script principal (Orquestração da IA e PDF)
