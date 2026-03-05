@@ -79,24 +79,14 @@ Com o ambiente virtual ativo, execute:
 pip install -r requirements.txt
 ```
 
-### 5. Criar seu arquivo de variáveis de ambiente
-
-1. Na raiz do projeto, crie um arquivo chamado .env.
-2. Adicione suas chaves no arquivo seguindo exatamente este formato:
-
-```Plaintext
-GEMINI_API_KEY=sua_chave_aqui
-RESEND_API_KEY=sua_chave_aqui
-```
-
-### 6. Configurar a API Key
+### 5. Configurar a API Key
 
 1. Obtenha sua chave gratuita no [Google AI Studio](https://aistudio.google.com/api-keys).
-2. Atualiza a chave GEMINI_API_KEY no arquivo *.env* com o valor obtido
+2. Edite o arquivo *.env* na raiz do projeto , e atualize a chave GEMINI_API_KEY com o valor obtido.
 3. Obtenha sua chave gratuita no [Resend](https://resend.com/api-keys)
-4. Atualiza a chave RESEND_API_KEY no arquivo *.env* com o valor obtido
+4. Edite novamente o arquivo *.env*, e atualize a chave RESEND_API_KEY com o valor obtido.
 
-### 7. Executar a Análise
+### 6. Executar a Análise
 
 Certifique-se de que sua imagem de arquitetura está na pasta **arquivos** raiz com extensão `jpg`. Em seguida, rode:
 

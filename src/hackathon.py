@@ -261,6 +261,14 @@ pasta_entrada = "arquivos"
 if not os.path.exists(pasta_entrada):
     os.makedirs(pasta_entrada)
 
+arquivos_imagem = [f for f in os.listdir(pasta_entrada) if f.lower().endswith((".jpg", ".jpeg"))]
+
+# Verifica se a lista está vazia
+if not arquivos_imagem:
+    print(f"\n[AVISO]: Nenhuma imagem encontrada na pasta '{pasta_entrada}'.")
+    print("Por favor, adicione seus diagramas (.jpg, .jpeg) nesta pasta e tente novamente.")
+    exit()
+
 print(f"Iniciando análise dos arquivos na pasta '{pasta_entrada}'...")
 
 for arquivo in os.listdir(pasta_entrada):
