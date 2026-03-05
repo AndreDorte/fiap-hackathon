@@ -92,7 +92,7 @@ def analisar_arquitetura(nome_arquivo,caminho_arquitetura_analise):
     with open(f'output//{nome_arquivo}', 'w', encoding='utf-8') as f:
         f.write(response.text.replace("```csv","").replace("```",""))
 
-    print(f"\nDataset exportado com sucesso para {nome_arquivo}'.csv'")
+    print(f"\nDataset exportado com sucesso para {nome_arquivo}")
 
 
 def analisar_stride(componente):
@@ -243,6 +243,7 @@ load_dotenv()
 # Carrega as variáveis de ambiente
 gemini_api_key = os.getenv("GEMINI_API_KEY")
 resend_api_key = os.getenv("RESEND_API_KEY")
+email_destinatario = os.getenv("EMAIL_DESTINATARIO")
 
 # Configura as API KEYS carregadas
 genai.configure(api_key=gemini_api_key)
@@ -294,3 +295,6 @@ for arquivo in os.listdir(pasta_entrada):
         # no modelo STRIDE, sinalizando as vulnerabilidades identificadas e as 
         # sugestões para mitigição das mesmas
         analisar_dataset(nome_dataset,caminho_relatorio_pdf,nome_arquivo_cache)
+
+        enviar_email_com_anexo(email_destinatario,caminho_relatorio_pdf)
+        

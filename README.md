@@ -82,9 +82,9 @@ pip install -r requirements.txt
 ### 5. Configurar a API Key
 
 1. Obtenha sua chave gratuita no [Google AI Studio](https://aistudio.google.com/api-keys).
-2. Edite o arquivo *.env* na raiz do projeto , e atualize a chave GEMINI_API_KEY com o valor obtido.
+2. Edite o arquivo *.env* na raiz do projeto , e atualize a chave **GEMINI_API_KEY** com o valor obtido.
 3. Obtenha sua chave gratuita no [Resend](https://resend.com/api-keys)
-4. Edite novamente o arquivo *.env*, e atualize a chave RESEND_API_KEY com o valor obtido.
+4. Edite novamente o arquivo *.env*, e atualize a chave **RESEND_API_KEY** com o valor obtido. Também atualize a chave **EMAIL_DESTINATARIO** com o e-mail utilizado para o cadastro da conta gratuita.
 
 ### 6. Executar a Análise
 
