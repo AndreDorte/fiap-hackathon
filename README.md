@@ -108,7 +108,9 @@ python .\src\hackathon.py
 
 ### 📊 Saída Esperada
 
-O script gera um relatório PDF profissional na pasta /outputs. Para cada componente identificado, o Gemini detalha a ameaça específica (conforme o modelo STRIDE) e a respectiva mitigação técnica recomendada pelas melhores práticas da AWS.
+O script gera um relatório PDF profissional na pasta `/outputs`. Para cada componente identificado, o Gemini detalha a ameaça específica (conforme o modelo STRIDE) e a respectiva mitigação técnica recomendada pelas melhores práticas da Cloud em questão.
 
-Desenvolvido por: <LISTAR  O NOME DOS INTEGRANTES>
+**Desenvolvido por:** 
+
+André Dorte Cardoso - Gustavo Trevisan Dini - Marcelo Benes Stransky Silva - Wesley Mariano Mauricio
 
