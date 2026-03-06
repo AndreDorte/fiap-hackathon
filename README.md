@@ -27,7 +27,8 @@ Este projeto foi desenvolvido para o **Hackathon FIAP - Fase 5**, com o objetivo
 ├── output/                      # Pasta onde os relatórios finais são salvos, datasets auxiliares, etc.
 ├── src/
 │   ├── hackathon.py             # Script principal (Visão, Análise e Geração de Relatório de Vulnerabilidades)
-├── .env.example                 # Modelo para configuração da API Key
+├── .env                         # Modelo para configuração da API Key
+├── Documentação de Fluxo.pdf    # Documento detalhando o fluxo utilizado para o desenvolvimento da solução
 ├── requirements.txt             # Dependências do projeto
 └── .gitignore                   # Proteção contra upload de venv e chaves
 ``` 
@@ -103,6 +104,7 @@ python .\src\hackathon.py
 │   ├── hackathon.py             # Script principal (Orquestração da IA e PDF)
 ├── .env                         # Arquivo de credenciais
 ├── .gitignore                   # Proteção de arquivos sensíveis e venv
+├── Documentação de Fluxo.pdf    # Documento detalhando o fluxo utilizado para o desenvolvimento da solução
 ├── requirements.txt             # Bibliotecas necessárias (fpdf2, pillow, google-generativeai, python-dotenv)
 ```
 
